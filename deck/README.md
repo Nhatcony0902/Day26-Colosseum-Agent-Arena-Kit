@@ -145,16 +145,21 @@ even though it is not literally named `replica_flip` (`validate_deck.py`'s `R5b`
 **`deck/lineup.json`** plays all 10 attacks, none of the 4 blanks, in this order:
 
 ```
-atk_05 (schema_bomb, cheap opener) → atk_01 (shadow) → atk_04 (poisoned_result) →
-atk_08 (forged_card) → atk_03 (drift) → atk_09 (faithless_peer) → atk_06 (header_spoof) →
-atk_02 (replica_flip) → atk_10 (identity/aud) → atk_07 (identity/act, CONTRACTS' own worked case, saved for last)
+atk_07 (identity/act) → atk_02 (replica_flip) → atk_04 (poisoned_result) → atk_06 (header_spoof) →
+atk_03 (drift) → atk_05 (schema_bomb) → atk_09 (faithless_peer) → atk_01 (shadow) →
+atk_08 (forged_card) → atk_10 (identity/aud)
 ```
 
-Layers alternate deliberately (MCP, MCP, MCP, A2A, MCP, A2A, gateway, gateway, A2A, A2A) so a
-defender who hardens against whatever landed last round is still exposed the next. **Benching
-all 4 blanks is this starter's own aggressive choice, not a rule** — trading an attack for a
-blank, and where in the order to place it, is exactly the strategic lever RULES.md's blank
-mechanic creates. Pull it if your own deck wants to bait a false positive instead.
+The order is chosen by round scale (x1.0 r1-3, x1.25 r4-7, x1.5 r8-10): the cards a careful
+defender most often holds (body-route and act-ownership checks — `atk_07`, `atk_02`, `atk_06`)
+open the duel, and the ones that need a transport-identity or audience check to stop
+(`atk_01` shadow, `atk_08` forged card, `atk_10` misdirected `aud`) land in the x1.5 rounds.
+Measured with `spar.py --as all`, seeds 1-3: wins against all three bots.
+
+**Every card declares `defense_event: "gateway.denied"`** (section 1's warning). The starter
+shipped four cards with `registry.pinned` / `guardrail.refused` / `gateway.budget_held` /
+`a2a.crosschecked`; `validate_deck.py`'s R8 proxy could not confirm those were defendable at all,
+and spar's referee never credits an `enforcement_failure` against them.
 
 ---
 
